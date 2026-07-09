@@ -72,16 +72,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      {}
-      <div style={{
-        padding: '10px 14px',
-        borderTop: '1px solid var(--border)',
-      }}>
-        <span style={{ fontSize: 11, color: 'var(--fg-dim)', lineHeight: 1.4 }}>
-          8 problems, 4 approaches each. Use the tabs above to switch.
-        </span>
-      </div>
     </aside>
   );
 }

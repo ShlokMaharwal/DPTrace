@@ -2,11 +2,12 @@
 import useStore from '../../store/useStore.js';
 import { registry } from '../../algorithms/index.js';
 import ThemeToggle from '../ThemeToggle.jsx';
+import { SplitSquareHorizontal, Layout, HelpCircle, Wrench } from 'lucide-react';
 
 const APPROACH_ORDER = ['bruteForce', 'memoized', 'tabulation', 'spaceOptimized'];
 
 export default function Header() {
-  const { problem, approach, setApproach } = useStore();
+  const { problem, approach, setApproach, comparisonMode, toggleComparisonMode, activeView, setActiveView } = useStore();
   const { meta } = registry[problem];
 
   return (
@@ -83,11 +84,59 @@ export default function Header() {
         })}
       </div>
 
+      <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0, margin: '0 8px' }} />
+
       {}
-      <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        <NavTab icon={<Layout size={14} />} label="Visualizer" active={activeView === 'visualizer'} onClick={() => setActiveView('visualizer')} />
+        <NavTab icon={<HelpCircle size={14} />} label="Quiz" active={activeView === 'quiz'} onClick={() => setActiveView('quiz')} />
+        <NavTab icon={<Wrench size={14} />} label="Tools" active={activeView === 'tools'} onClick={() => setActiveView('tools')} />
+      </div>
+
+      {activeView === 'visualizer' && (
+        <>
+          <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0, margin: '0 8px' }} />
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            <button
+              className={`btn ${comparisonMode ? 'btn-active' : ''}`}
+              onClick={toggleComparisonMode}
+              title="Compare approaches side-by-side"
+              style={{ padding: '6px', minWidth: 'auto', background: comparisonMode ? 'var(--accent-soft)' : 'transparent', color: comparisonMode ? 'var(--accent)' : 'var(--fg-muted)', border: comparisonMode ? '1px solid var(--accent)' : '1px solid var(--border)' }}
+            >
+              <SplitSquareHorizontal size={14} />
+              <span style={{ fontSize: 11, marginLeft: 4 }}>Compare</span>
+            </button>
+          </div>
+        </>
+      )}
+
+      {}
+      <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0, marginLeft: 8 }} />
 
       {}
       <ThemeToggle />
     </header>
+  );
+}
+
+function NavTab({ icon, label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 6,
+        padding: '6px 12px',
+        borderRadius: 6,
+        background: active ? 'var(--panel-2)' : 'transparent',
+        color: active ? 'var(--fg)' : 'var(--fg-dim)',
+        border: '1px solid transparent',
+        borderColor: active ? 'var(--border)' : 'transparent',
+        fontSize: 12, fontWeight: 500, cursor: 'pointer',
+        transition: 'all 0.15s'
+      }}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }

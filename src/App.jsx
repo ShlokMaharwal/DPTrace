@@ -9,9 +9,12 @@ import RecursionTree from './components/visualizers/RecursionTree.jsx';
 import DPTable from './components/visualizers/DPTable.jsx';
 import CodePanel from './components/visualizers/CodePanel.jsx';
 import StatsPanel from './components/stats/StatsPanel.jsx';
+import ComparisonMode from './components/features/ComparisonMode.jsx';
+import QuizPage from './components/features/QuizPage.jsx';
+import ToolsPage from './components/features/ToolsPage.jsx';
 
 function App() {
-  const { problem, approach, input, setSteps } = useStore();
+  const { problem, approach, input, setSteps, comparisonMode, comparisonApproach, setComparisonSteps, activeView } = useStore();
   const problemReg = registry[problem];
   const apMeta = problemReg.meta.approaches[approach];
   const visualizer = apMeta?.visualizer ?? 'table1d';
@@ -23,13 +26,21 @@ function App() {
   const runAlgorithm = useCallback((overrideInput) => {
     const inp = overrideInput ?? input[problem];
     try {
-      const { result, steps, truncated, totalSteps } = problemReg[approach](inp);
+      const { steps } = problemReg[approach](inp);
       setSteps(steps);
       
+      if (comparisonMode && registry[problem][comparisonApproach]) {
+        try {
+          const { steps: csteps } = registry[problem][comparisonApproach](inp);
+          setComparisonSteps(csteps);
+        } catch (e) {
+          console.error('Comparison run error:', e);
+        }
+      }
     } catch (err) {
       console.error('Algorithm error:', err);
     }
-  }, [problem, approach, input, problemReg, setSteps]);
+  }, [problem, approach, input, problemReg, setSteps, comparisonMode, comparisonApproach, setComparisonSteps]);
 
   
   useEffect(() => {
@@ -44,38 +55,59 @@ function App() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
       <Header />
-      <div style={{ display: 'flex', flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
+      <div className="main-layout" style={{ display: 'flex', flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
         <Sidebar />
 
         {}
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 600 }}>
-          <InputPanel onRun={runAlgorithm} />
+        <div className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 600 }}>
+          
+          {activeView === 'visualizer' && (
+            <>
+              <InputPanel onRun={runAlgorithm} />
+
+              {comparisonMode ? (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <ComparisonMode />
+                  <PlaybackBar truncated={truncated} />
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 24 }}>
+                    {}
+                    <div className="surface" style={{ minHeight: 400, display: 'flex', flexDirection: 'column', padding: 16 }}>
+                      <div style={{ flex: 1 }}>
+                        {showTree ? <RecursionTree /> : <DPTable />}
+                      </div>
+                    </div>
+
+                    <div className="code-stats-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+                      {}
+                      <div style={{ flex: '2 1 400px', minWidth: 400, minHeight: 400 }}>
+                        <CodePanel />
+                      </div>
+
+                      {}
+                      <div style={{ flex: '1 1 300px', minWidth: 300 }}>
+                        <StatsPanel />
+                      </div>
+                    </div>
+                  </div>
+
+                  <PlaybackBar truncated={truncated} />
+                </>
+              )}
+            </>
+          )}
+
+          {activeView === 'quiz' && (
+            <QuizPage />
+          )}
+
+          {activeView === 'tools' && (
+            <ToolsPage />
+          )}
 
           {}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 24 }}>
-            {}
-            <div className="surface" style={{ minHeight: 400, display: 'flex', flexDirection: 'column', padding: 16 }}>
-              <div style={{ flex: 1 }}>
-                {showTree ? <RecursionTree /> : <DPTable />}
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-              {}
-              <div style={{ flex: '2 1 400px', minWidth: 400, minHeight: 400 }}>
-                <CodePanel />
-              </div>
-
-              {}
-              <div style={{ flex: '1 1 300px', minWidth: 300 }}>
-                <StatsPanel />
-              </div>
-            </div>
-          </div>
-
-          <PlaybackBar truncated={truncated} />
-          
-          {/* Footer */}
           <div style={{
             textAlign: 'center',
             padding: '12px',

@@ -47,6 +47,24 @@ import * as psTab from './partitionSubset/tabulation.js';
 import * as psSO from './partitionSubset/spaceOptimized.js';
 import { meta as psMeta } from './partitionSubset/meta.js';
 
+import * as edropBF from './eggDrop/bruteForce.js';
+import * as edropMemo from './eggDrop/memoized.js';
+import * as edropTab from './eggDrop/tabulation.js';
+import * as edropSO from './eggDrop/spaceOptimized.js';
+import { meta as edropMeta } from './eggDrop/meta.js';
+
+import * as ppBF from './palindromePartition/bruteForce.js';
+import * as ppMemo from './palindromePartition/memoized.js';
+import * as ppTab from './palindromePartition/tabulation.js';
+import * as ppSO from './palindromePartition/spaceOptimized.js';
+import { meta as ppMeta } from './palindromePartition/meta.js';
+
+import * as tspBF from './tsp/bruteForce.js';
+import * as tspMemo from './tsp/memoized.js';
+import * as tspTab from './tsp/tabulation.js';
+import * as tspSO from './tsp/spaceOptimized.js';
+import { meta as tspMeta } from './tsp/meta.js';
+
 const STEP_CAP = 5000;
 
 function capped(runFn, input) {
@@ -120,6 +138,30 @@ export const registry = {
     spaceOptimized: (input) => capped(psSO.run, input),
     code: { bruteForce: psBF.code, memoized: psMemo.code, tabulation: psTab.code, spaceOptimized: psSO.code },
   },
+  eggDrop: {
+    meta: edropMeta,
+    bruteForce: (input) => capped(edropBF.run, input),
+    memoized: (input) => capped(edropMemo.run, input),
+    tabulation: (input) => capped(edropTab.run, input),
+    spaceOptimized: (input) => capped(edropSO.run, input),
+    code: { bruteForce: edropBF.code, memoized: edropMemo.code, tabulation: edropTab.code, spaceOptimized: edropSO.code },
+  },
+  palindromePartition: {
+    meta: ppMeta,
+    bruteForce: (input) => capped(ppBF.run, input),
+    memoized: (input) => capped(ppMemo.run, input),
+    tabulation: (input) => capped(ppTab.run, input),
+    spaceOptimized: (input) => capped(ppSO.run, input),
+    code: { bruteForce: ppBF.code, memoized: ppMemo.code, tabulation: ppTab.code, spaceOptimized: ppSO.code },
+  },
+  tsp: {
+    meta: tspMeta,
+    bruteForce: (input) => capped(tspBF.run, input),
+    memoized: (input) => capped(tspMemo.run, input),
+    tabulation: (input) => capped(tspTab.run, input),
+    spaceOptimized: (input) => capped(tspSO.run, input),
+    code: { bruteForce: tspBF.code, memoized: tspMemo.code, tabulation: tspTab.code, spaceOptimized: tspSO.code },
+  },
 };
 
-export const problemOrder = ['fibonacci', 'knapsack', 'coinChange', 'lcs', 'editDistance', 'lis', 'mcm', 'partitionSubset'];
+export const problemOrder = ['fibonacci', 'knapsack', 'coinChange', 'lcs', 'editDistance', 'lis', 'mcm', 'partitionSubset', 'eggDrop', 'palindromePartition', 'tsp'];

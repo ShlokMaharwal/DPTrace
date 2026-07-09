@@ -1,6 +1,7 @@
 
 import useStore from '../../store/useStore.js';
 import { registry } from '../../algorithms/index.js';
+import ComplexityGraph from '../features/ComplexityGraph.jsx';
 
 export default function StatsPanel() {
   const { problem, approach, stats } = useStore();
@@ -133,6 +134,8 @@ export default function StatsPanel() {
           ))}
         </div>
       )}
+
+      <ComplexityGraph />
     </div>
   );
 }
