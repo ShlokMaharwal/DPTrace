@@ -1,6 +1,6 @@
 # DPTrace
 
-**Live Demo:** [DPTrace]()
+**Live Demo:** [https://dp-trace.vercel.app/](https://dp-trace.vercel.app/)
 
 > An interactive, beautifully crafted visualizer for Dynamic Programming algorithms. Trace, compare, quiz, and build your own recurrences — all in the browser.
 
