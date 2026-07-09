@@ -114,19 +114,21 @@ function Table1D({ snapshot, steps, currentStep, step, problemInput, problem }) 
 
       <div className="label" style={{ marginBottom: 6 }}>dp[ ] — {snapshot.length} cells</div>
 
-      {}
-      <div style={{ display: 'flex', gap: 3, marginBottom: 3 }}>
-        {snapshot.map((_, i) => (
-          <div key={i} style={{
-            minWidth: 34, textAlign: 'center',
-            fontSize: 9, color: 'var(--fg-dim)', fontFamily: 'JetBrains Mono, monospace',
-          }}>{i}</div>
-        ))}
-      </div>
+      {/* Index labels + cells in one scrollable no-wrap strip */}
+      <div style={{ overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: 3, marginBottom: 3, minWidth: 'max-content' }}>
+          {snapshot.map((_, i) => (
+            <div key={i} style={{
+              minWidth: 34, textAlign: 'center',
+              fontSize: 9, color: 'var(--fg-dim)', fontFamily: 'JetBrains Mono, monospace',
+            }}>{i}</div>
+          ))}
+        </div>
 
-      {}
-      <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-        {snapshot.map((val, i) => cell(val, i))}
+        {}
+        <div style={{ display: 'flex', gap: 3, minWidth: 'max-content' }}>
+          {snapshot.map((val, i) => cell(val, i))}
+        </div>
       </div>
 
       {}

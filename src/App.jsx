@@ -87,7 +87,7 @@ function App() {
         <Sidebar />
 
         {}
-        <div className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 600 }}>
+        <div className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
           
           {activeView === 'visualizer' && (
             <>
@@ -100,9 +100,9 @@ function App() {
                 </div>
               ) : (
                 <>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 24 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: 'clamp(12px, 4vw, 24px)' }}>
                     {}
-                    <div className="surface" style={{ minHeight: 400, display: 'flex', flexDirection: 'column', padding: 16 }}>
+                    <div className="surface" style={{ minHeight: 'clamp(260px, 40vh, 400px)', display: 'flex', flexDirection: 'column', padding: 16 }}>
                       <div style={{ flex: 1 }}>
                         {showTree ? <RecursionTree /> : <DPTable />}
                       </div>
@@ -110,12 +110,12 @@ function App() {
 
                     <div className="code-stats-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
                       {}
-                      <div style={{ flex: '2 1 400px', minWidth: 400, minHeight: 400 }}>
+                      <div style={{ flex: '2 1 300px', minWidth: 0, minHeight: 300 }}>
                         <CodePanel />
                       </div>
 
                       {}
-                      <div style={{ flex: '1 1 300px', minWidth: 300 }}>
+                      <div style={{ flex: '1 1 260px', minWidth: 0 }}>
                         <StatsPanel />
                       </div>
                     </div>

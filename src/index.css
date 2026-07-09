@@ -269,46 +269,75 @@ input[type=range]:disabled { opacity: 0.3; cursor: not-allowed; }
 }
 
 
-@media (max-width: 900px) {
-  .sidebar-panel {
+
+
+
+/* ──────────────────────────────────────────
+   Tablet (≤ 800px): sidebar → horizontal nav
+────────────────────────────────────────── */
+@media (max-width: 800px) {
+  .main-layout { flex-direction: column !important; }
+
+  aside {
     width: 100% !important;
-    max-width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
     border-right: none !important;
     border-bottom: 1px solid var(--border);
   }
 
-  .main-layout {
-    flex-direction: column !important;
+  aside nav {
+    flex-direction: row !important;
+    display: flex !important;
+    overflow-x: auto;
+    padding: 0 12px !important;
+    scrollbar-width: none;
   }
 
-  .main-content {
-    min-width: unset !important;
+  aside nav::-webkit-scrollbar { display: none; }
+
+  .problem-item {
+    min-width: 140px;
+    border-left: none !important;
+    border-bottom: 3px solid transparent;
+    padding: 8px 12px !important;
+    flex-shrink: 0;
   }
 
-  .code-stats-row {
-    flex-direction: column !important;
+  .problem-item.active {
+    border-bottom-color: var(--accent) !important;
+    background: transparent !important;
   }
 
-  .code-stats-row > * {
-    min-width: unset !important;
-    flex: unset !important;
-    width: 100% !important;
-  }
+  .code-stats-row { flex-direction: column !important; }
+  .code-stats-row > div { min-width: 100% !important; flex: 1 1 auto !important; }
+  .main-content { min-width: 100% !important; }
+
+  /* Hide the "Problems" section label above the horizontal tab strip */
+  aside > div:first-child { display: none; }
 }
 
+/* ──────────────────────────────────────────
+   Mobile (≤ 600px): compact everything
+────────────────────────────────────────── */
 @media (max-width: 600px) {
   .header-inner {
-    padding: 0 12px !important;
-    gap: 8px !important;
+    padding: 0 10px !important;
+    gap: 6px !important;
   }
+
+  /* On mobile, hide desktop nav tabs and show hamburger */
+  .header-nav-desktop { display: none !important; }
+  .header-compare-desktop { display: none !important; }
+  .header-menu-btn { display: flex !important; }
 
   .approach-tabs {
     gap: 0 !important;
   }
 
   .approach-tab {
-    padding: 6px 7px !important;
-    font-size: 12px !important;
+    padding: 6px 6px !important;
+    font-size: 11px !important;
   }
 
   .playback-controls {
@@ -321,25 +350,24 @@ input[type=range]:disabled { opacity: 0.3; cursor: not-allowed; }
     min-height: 28px !important;
     font-size: 11px !important;
   }
+
+  /* Hide description + divider in InputPanel to save vertical space */
+  .input-panel-desc  { display: none !important; }
+  .input-panel-divider { display: none !important; }
+
+  /* Ensure text doesn't overflow horizontally in insight blocks */
+  p, blockquote, li, span {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
 }
 
-@media (max-width: 800px) {
-  .main-layout { flex-direction: column !important; }
-  aside {
-    width: 100% !important; min-width: 100% !important; height: auto !important;
-    border-right: none !important; border-bottom: 1px solid var(--border);
-  }
-  aside nav {
-    flex-direction: row !important; display: flex !important;
-    overflow-x: auto; padding: 0 16px !important;
-  }
-  .problem-item {
-    min-width: 160px; border-left: none !important; border-bottom: 3px solid transparent; padding: 8px 12px !important;
-  }
-  .problem-item.active {
-    border-bottom-color: var(--accent) !important; background: transparent !important;
-  }
-  .code-stats-row { flex-direction: column !important; }
-  .code-stats-row > div { min-width: 100% !important; flex: 1 1 auto !important; }
-  .main-content { min-width: 100% !important; }
+/* ──────────────────────────────────────────
+   Above 600px: hamburger hidden, desktop nav visible
+────────────────────────────────────────── */
+@media (min-width: 601px) {
+  .header-menu-btn { display: none !important; }
+  .header-mobile-menu { display: none !important; }
+  .header-nav-desktop { display: flex !important; }
+  .header-compare-desktop { display: flex !important; }
 }

@@ -100,13 +100,13 @@ export default function InputPanel({ onRun }) {
       padding: '10px 16px',
       display: 'flex',
       alignItems: 'flex-end',
-      gap: 16,
+      gap: 12,
       flexWrap: 'wrap',
       flexShrink: 0,
     }}>
 
-      {}
-      <div style={{ flex: '0 0 auto', maxWidth: 240 }}>
+      {/* Approach description - hidden on very small screens */}
+      <div className="input-panel-desc" style={{ flex: '0 0 auto', maxWidth: 220 }}>
         <div className="label" style={{ marginBottom: 5 }}>Approach</div>
         <p style={{ fontSize: 12, color: 'var(--fg-muted)', lineHeight: 1.5, margin: 0 }}>
           {apMeta?.description}
@@ -126,8 +126,8 @@ export default function InputPanel({ onRun }) {
         </div>
       </div>
 
-      {}
-      <div style={{ width: 1, height: 44, background: 'var(--border)', flexShrink: 0 }} />
+      {/* Vertical divider - hidden on mobile */}
+      <div className="input-panel-divider" style={{ width: 1, height: 44, background: 'var(--border)', flexShrink: 0 }} />
 
       {}
       <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, flex: 1, flexWrap: 'wrap' }}>
