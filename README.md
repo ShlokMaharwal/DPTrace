@@ -2,68 +2,125 @@
 
 **Live Demo:** [https://dp-trace.vercel.app/](https://dp-trace.vercel.app/)
 
-> An interactive, beautifully crafted visualizer for Dynamic Programming algorithms. Trace, compare, quiz, and build your own recurrences — all in the browser.
-
-DPTrace helps you intuitively understand dynamic programming by visually tracing the execution of classic algorithms. It breaks down each problem into four distinct approaches, showing you exactly how the call stack evolves, how the DP table is populated, and how space optimization works in practice.
+> An interactive, step-by-step visualizer for Dynamic Programming algorithms. Trace execution, compare approaches, quiz yourself, and build your own recurrences — all in the browser.
 
 ---
 
-## User Guide: How DPTrace Works
+## 📸 Demo
 
-DPTrace isn't just a static display; it is a full execution engine that runs your inputs step-by-step. Here is where you can find all of its features:
+### Step-by-step Visualizer
+![Visualizer Demo](docs/visualizer.png)
 
-### 1. The Main Visualizer
-The core experience. Select any of the 11 classic DP problems from the left sidebar to begin.
-- **Select an Approach:** Switch between **Brute Force**, **Memoized**, **Tabulation**, and **Space Optimized** solutions using the top tabs.
-- **Playback Controls:** Use the scrubber at the bottom to step through the algorithm frame by frame.
-  - *Pro tip:* Use <kbd>Space</kbd> to play/pause, and the <kbd>Left</kbd>/<kbd>Right</kbd> arrow keys to step manually.
-- **Custom Inputs:** Expand the left panel to test your own arrays, strings, or targets. The algorithms adapt instantly to your custom edges cases.
-- **Tree Explorer:** When viewing a recursion tree, you can **click and drag** to pan around, and use your mouse wheel to **zoom** in and out of massive recursion trees.
+### Compare Mode — Side by Side
+![Compare Mode](docs/compare.png)
 
-### 2. Compare Mode
-Want to see exactly why Memoization is faster than Brute Force? 
-While in the Visualizer, click the **Compare** button in the top navigation bar. Select two different approaches and watch them execute side-by-side using the same playback scrubber to visually compare their time/space complexity.
+### Recurrence Parser
+![Recurrence Parser](docs/parser.png)
 
-### 3. Tools & Utilities
-Navigate to the **Tools** tab in the top menu to access standalone DP utilities:
-- **Auto-Classify Problem:** Paste a word problem from a coding interview. The NLP engine will instantly read it and identify which of the 11 DP patterns it matches.
-- **Recurrence Parser:** Type your own mathematical DP recurrence relation (e.g. `dp[i] = dp[i-1] + dp[i-2]`) and define base cases. The engine will parse your math and instantly generate a trace table for you to step through.
+---
 
-### 4. The DP Quiz
-Test your knowledge in the **Quiz** tab. It features over 50 carefully crafted questions covering Time/Space Complexity, identifying DP states, recognizing optimal substructures, and understanding space optimization tricks.
+## How to Use
 
-### 5. Share Your Test Cases
-Created a cool custom test case? You can easily share it! Open the Input Panel on the left side of the visualizer and click the **Share** button. This copies a special URL to your clipboard that encodes your exact problem, approach, and custom inputs so others can load your exact state instantly.
+| Feature | Where to find it |
+| :--- | :--- |
+| Step through an algorithm | **Visualizer** tab → pick a problem → click **Run** → use the scrubber or arrow keys |
+| Compare two approaches | **Visualizer** tab → click **Compare** in the header |
+| Test a custom input | Left panel → edit the input fields → click **Run** |
+| Classify a word problem | **Tools** tab → paste problem statement → **Classify** |
+| Build a custom recurrence | **Tools** tab → Recurrence Parser |
+| Take a quiz | **Quiz** tab |
+| Share your test case | Left panel → **Share** button — copies a URL with your full state |
+
+**Keyboard shortcuts:** `Space` play/pause · `←` step back · `→` step forward
 
 ---
 
 ## Supported Problems
 
-DPTrace covers 11 classic problems representing various DP patterns:
+11 classic DP problems, each with 4 fully animated approaches (Brute Force → Memoized → Tabulation → Space Optimized):
 
-| # | Problem | Pattern |
-|---|---------|------|
-| 01 | Fibonacci Sequence | 1D DP |
-| 02 | 0/1 Knapsack | 2D DP |
-| 03 | Coin Change | 1D DP |
-| 04 | Longest Common Subsequence (LCS) | 2D DP |
-| 05 | Edit Distance | 2D DP |
-| 06 | Longest Increasing Subsequence (LIS) | 1D DP |
-| 07 | Matrix Chain Multiplication (MCM) | Interval DP |
-| 08 | Partition Equal Subset Sum | Subset DP |
-| 09 | Egg Drop Problem | 2D DP |
-| 10 | Palindrome Partitioning | 1D DP |
-| 11 | TSP — Bitmask DP | Bitmask DP |
+| # | Problem | Pattern | Difficulty |
+|---|---------|------|---|
+| 01 | Fibonacci Sequence | 1D DP | Easy |
+| 02 | 0/1 Knapsack | 2D DP | Medium |
+| 03 | Coin Change | 1D DP | Medium |
+| 04 | Longest Common Subsequence | 2D DP | Medium |
+| 05 | Edit Distance | 2D DP | Hard |
+| 06 | Longest Increasing Subsequence | 1D DP | Medium |
+| 07 | Matrix Chain Multiplication | Interval DP | Hard |
+| 08 | Partition Equal Subset Sum | Subset DP | Medium |
+| 09 | Egg Drop Problem | 2D DP | Hard |
+| 10 | Palindrome Partitioning | 1D DP | Hard |
+| 11 | TSP — Bitmask DP | Bitmask DP | Hard |
+
+---
+
+## Technical Architecture
+
+### Execution Engine — The Trace Pattern
+
+The core challenge: how do you pause and inspect a running algorithm without modifying the language runtime or using ASTs?
+
+DPTrace uses a **synchronous trace pattern**. Every algorithm, when invoked, runs to completion instantly and emits structured step objects into a `steps[]` array:
+
+```js
+steps.push({ type: 'call', state: [n], lineNumber: 2 });
+steps.push({ type: 'cache_hit', state: [n], value: memo[n], lineNumber: 4 });
+steps.push({ type: 'return', value: result, lineNumber: 8 });
+```
+
+The UI then acts as a pure **video player** over this array — `currentStep` is just an index. Scrubbing, jumping, and reverse-playback are free. No timers, no generators, no async.
+
+### State Management — Zustand
+
+All shared state (active problem, current step, comparison steps, inputs) lives in a single flat Zustand store. Components subscribe to only what they need — the playback scrubber and the SVG recursion tree re-render independently with no prop drilling.
+
+### Dual-State Input System
+
+Handling array inputs in a text field creates a UX trap: parse on every keystroke and users can't type commas (the field snaps back). DPTrace maintains two parallel states:
+
+- `rawText` — exactly what the user typed (drives the `<textarea>`)  
+- `localInput` — the silently-parsed array (drives the algorithm)
+
+This gives a flawless typing experience while ensuring the algorithm never crashes on intermediate states like `"1, 2, "`.
+
+### TF-IDF Problem Classifier
+
+The Auto-Classify feature uses a custom **TF-IDF (Term Frequency–Inverse Document Frequency)** engine built from scratch in plain JavaScript — no libraries. It:
+
+1. Tokenizes both the query and a corpus of problem pattern documents
+2. Computes TF-IDF weight vectors for both
+3. Calculates **Cosine Similarity** to find the closest matching problem
+
+High accuracy for our 11-problem domain with effectively zero latency and zero bundle cost.
+
+### URL State Serialization
+
+The **Share** button serializes `problem + approach + input` into query params:
+
+```
+?problem=knapsack&approach=memoized&input={"weights":[2,3,4],"capacity":8}
+```
+
+On load, a `useEffect` reads `window.location.search`, merges the decoded state into Zustand, triggers `runAlgorithm()`, then calls `history.replaceState` to clean the URL — no page reload.
+
+### Recursion Tree Renderer
+
+Trees are built by replaying the `steps[]` trace with a virtual call stack, then laid out with a **Reingold–Tilford-style width-minimization algorithm**. The SVG canvas supports drag-to-pan and scroll-to-zoom via pointer events and CSS `transform: translate/scale`.
+
+---
 
 ## Tech Stack
 
-| Layer | Tech |
-| :--- | :--- |
-| Framework | React |
-| State Management | Zustand |
-| Tooling | Vite |
-| Styling | Vanilla CSS |
-| Icons | Lucide React |
+| Layer | Technology | Why |
+| :--- | :--- | :--- |
+| **UI Framework** | React | Component model maps cleanly onto the panel-based layout; hooks make step subscriptions trivial |
+| **State** | Zustand | Zero boilerplate, no context providers, fine-grained subscriptions — critical for keeping the playback scrubber performant |
+| **Build Tool** | Vite | Sub-second HMR made iterating on algorithm trace output fast; native ESM means no config overhead |
+| **Styling** | Vanilla CSS | Full control over CSS variables for the dark/light theme system without runtime overhead of a CSS-in-JS library |
+| **Icons** | Lucide React | Consistent stroke-width icon set that scales cleanly at the 14–18px sizes used throughout the UI |
+
+---
 
 ## License
 
