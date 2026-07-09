@@ -1,8 +1,8 @@
-# DPTrace.
+# DPTrace
+
+**Live Demo:** [DPTrace]()
 
 > An interactive, beautifully crafted visualizer for Dynamic Programming algorithms.
-
-**[Live Demo]()**
 
 DPTrace helps you intuitively understand dynamic programming by visually tracing the execution of classic algorithms. It breaks down each problem into four distinct approaches, showing you exactly how the call stack evolves, how the DP table is populated, and how space optimization works in practice.
 
@@ -32,31 +32,13 @@ DPTrace helps you intuitively understand dynamic programming by visually tracing
 
 ## Tech Stack
 
-- **Framework**: React
-- **State Management**: Zustand
-- **Tooling**: Vite
-- **Styling**: Vanilla CSS
-- **Icons**: Lucide React
-
-## Running Locally
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/DPTrace.git
-   cd DPTrace
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-4. Open your browser and navigate to `http://localhost:5173`.
+| Layer | Tech |
+| :--- | :--- |
+| Framework | React |
+| State Management | Zustand |
+| Tooling | Vite |
+| Styling | Vanilla CSS |
+| Icons | Lucide React |
 
 ## License
 
