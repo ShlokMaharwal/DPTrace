@@ -3,6 +3,7 @@ export const meta = {
   title: 'TSP — Bitmask DP',
   description: 'Travelling Salesman Problem using bitmask DP. Find the minimum cost Hamiltonian cycle through all cities. State: dp[mask][city] = min cost to have visited exactly the cities in mask, ending at city.',
   category: 'Bitmask DP',
+  difficulty: 'Hard',
   tags: ['bitmask', 'NP-hard', 'graph', 'combinatorial'],
 
   inputSchema: [
@@ -18,7 +19,7 @@ export const meta = {
       description: 'Try all n! permutations and return the minimum cost. Exponential in n.',
       time: 'O(n!)',
       space: 'O(n)',
-      visualizer: 'table2d',
+      visualizer: 'tree',
     },
     memoized: {
       label: 'Memoized',
@@ -26,7 +27,7 @@ export const meta = {
       description: 'Top-down bitmask DP: cache (mask, city) state to avoid recomputing the same sub-tours.',
       time: 'O(n² · 2ⁿ)',
       space: 'O(n · 2ⁿ)',
-      visualizer: 'table2d',
+      visualizer: 'tree',
     },
     tabulation: {
       label: 'Tabulation',

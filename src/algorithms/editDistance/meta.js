@@ -3,6 +3,7 @@ export const meta = {
   title: 'Edit Distance (Levenshtein)',
   description: 'What\'s the minimum number of single-character edits (insert, delete, replace) to turn one string into another? It\'s the engine behind spell checkers and diff tools.',
   category: '2D DP',
+  difficulty: 'Medium',
   tags: ['string', '2D', 'transformation', 'Levenshtein'],
   inputSchema: [
     { key: 's1', label: 'Source String', type: 'string', maxLength: 7 },

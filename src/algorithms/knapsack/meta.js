@@ -3,6 +3,7 @@ export const meta = {
   title: '0/1 Knapsack',
   description: 'You have a bag with a weight limit, and a bunch of items with weights and values. What\'s the most valuable combination you can fit? You can either take an item or leave it — no fractions, no repeats.',
   category: '2D DP',
+  difficulty: 'Medium',
   tags: ['2D', 'classic', 'decision DP', 'subset selection'],
   inputSchema: [
     { key: 'weights', label: 'Weights (comma-separated)', type: 'array', min: 1, max: 6 },

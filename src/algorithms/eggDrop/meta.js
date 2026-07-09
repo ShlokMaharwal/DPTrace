@@ -3,6 +3,7 @@ export const meta = {
   title: 'Egg Drop Problem',
   description: 'Given e eggs and f floors, find the minimum number of trials needed in the worst case to find the critical floor. A classic DP problem on "minimax" thinking.',
   category: '2D DP',
+  difficulty: 'Hard',
   tags: ['minimax', '2D', 'decision DP', 'classic'],
 
   inputSchema: [
@@ -19,7 +20,7 @@ export const meta = {
       description: 'Pure recursion: for each floor, try dropping and take the worst of (egg breaks, egg survives). Recomputes everything.',
       time: 'O(e · f²)',
       space: 'O(e · f)',
-      visualizer: 'table2d',
+      visualizer: 'tree',
     },
     memoized: {
       label: 'Memoized',
@@ -27,7 +28,7 @@ export const meta = {
       description: 'Same recursion with caching — avoids recomputing the same (eggs, floors) states.',
       time: 'O(e · f²)',
       space: 'O(e · f)',
-      visualizer: 'table2d',
+      visualizer: 'tree',
     },
     tabulation: {
       label: 'Tabulation',

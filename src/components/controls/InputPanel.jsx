@@ -1,6 +1,5 @@
-
-import { useState } from 'react';
-import { Play, RotateCcw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Play, RotateCcw, Share2, Check } from 'lucide-react';
 import useStore from '../../store/useStore.js';
 import { registry } from '../../algorithms/index.js';
 
@@ -8,20 +7,39 @@ export default function InputPanel({ onRun }) {
   const { problem, approach, input, updateInput, setIsPlaying } = useStore();
   const { meta } = registry[problem];
   const schema = meta.inputSchema;
+  
+  
   const currentInput = input[problem];
+  
+  
   const [localInput, setLocalInput] = useState(currentInput);
+  const [rawText, setRawText] = useState({});
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  
+  useEffect(() => {
+    setLocalInput(input[problem]);
+    setRawText({});
+    setError('');
+  }, [problem, input]);
+
 
   const apMeta = meta.approaches[approach];
 
   function handleChange(key, raw) {
     const field = schema.find(f => f.key === key);
+    
+    
+    setRawText(prev => ({ ...prev, [key]: raw }));
+
     let val = raw;
     if (field.type === 'number') val = Number(raw);
     if (field.type === 'array') {
       val = raw.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
     }
-    if (field.type === 'string') val = raw.slice(0, field.maxLength || 10);
+    if (field.type === 'string') val = raw.slice(0, field.maxLength || 15);
+    
     setLocalInput(prev => ({ ...prev, [key]: val }));
     setError('');
   }
@@ -51,15 +69,28 @@ export default function InputPanel({ onRun }) {
 
   function handleReset() {
     setLocalInput(meta.defaultInput);
+    setRawText({});
     setError('');
     updateInput(problem, meta.defaultInput);
     onRun(meta.defaultInput);
   }
 
-  function displayValue(key, val) {
+  function displayValue(key) {
+    if (rawText[key] !== undefined) return rawText[key];
+    const val = localInput[key];
     const field = schema.find(f => f.key === key);
     if (field.type === 'array') return Array.isArray(val) ? val.join(', ') : val;
-    return val;
+    return val ?? '';
+  }
+
+  function handleShare() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('problem', problem);
+    url.searchParams.set('approach', approach);
+    url.searchParams.set('input', JSON.stringify(localInput));
+    navigator.clipboard.writeText(url.toString());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -118,7 +149,7 @@ export default function InputPanel({ onRun }) {
               <input
                 type="text"
                 className="dp-input"
-                value={displayValue(field.key, localInput[field.key])}
+                value={displayValue(field.key)}
                 onChange={e => handleChange(field.key, e.target.value)}
                 placeholder={field.type === 'array' ? '1, 2, 3' : 'text'}
                 style={{ minWidth: field.type === 'string' ? 120 : 140 }}
@@ -137,6 +168,10 @@ export default function InputPanel({ onRun }) {
 
       {}
       <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+        <button className="btn" onClick={handleShare} title="Copy link to this setup">
+          {copied ? <Check size={12} style={{ color: 'var(--state-base)' }} /> : <Share2 size={12} />}
+          {copied ? 'Copied' : 'Share'}
+        </button>
         <button className="btn" onClick={handleReset} title="Reset to defaults">
           <RotateCcw size={12} />
           Reset

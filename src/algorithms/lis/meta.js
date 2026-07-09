@@ -3,6 +3,7 @@ export const meta = {
   title: 'Longest Increasing Subsequence',
   description: 'Find the longest strictly increasing subsequence in an array. The numbers don\'t have to be next to each other, they just have to go up.',
   category: '1D DP',
+  difficulty: 'Medium',
   tags: ['1D', 'binary search', 'patience sorting', 'subsequence'],
   inputSchema: [
     { key: 'arr', label: 'Array (comma-separated)', type: 'array', maxLength: 12 },

@@ -3,6 +3,7 @@ export const meta = {
   title: 'Matrix Chain Multiplication',
   description: 'What\'s the cheapest way to parenthesize a chain of matrix multiplications? The final result is the same, but the order changes the number of scalar multiplications wildly.',
   category: 'Interval DP',
+  difficulty: 'Hard',
   tags: ['interval DP', '2D', 'optimization', 'parenthesization'],
   inputSchema: [
     { key: 'dims', label: 'Dimensions (comma-separated, e.g. 10,30,5,60 = matrices 10×30, 30×5, 5×60)', type: 'array', minLength: 3, maxLength: 6 },

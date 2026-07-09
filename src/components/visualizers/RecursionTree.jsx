@@ -1,6 +1,6 @@
-
-import { useMemo } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import useStore from '../../store/useStore.js';
+import { ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 
 const NODE_W = 46;
 const NODE_H = 26;
@@ -74,7 +74,6 @@ function layoutTree(root) {
   return { nodes: nodes.filter(n => n.id !== 'root'), maxX };
 }
 
-
 const NODE_STYLE = {
   call:   { stroke: 'var(--fg-dim)',      fill: 'transparent',           text: 'var(--fg-muted)' },
   base:   { stroke: 'var(--state-base)',  fill: 'rgba(126,168,126,0.12)',text: 'var(--state-base)' },
@@ -85,6 +84,12 @@ const NODE_STYLE = {
 
 export default function RecursionTree() {
   const { steps, currentStep } = useStore();
+  const containerRef = useRef(null);
+
+  const [scale, setScale] = useState(1);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0, pos: { x: 0, y: 0 } });
 
   const { nodes, svgW, svgH } = useMemo(() => {
     const root = buildTree(steps, currentStep);
@@ -98,29 +103,74 @@ export default function RecursionTree() {
   function nx(n) { return 20 + n._x * (NODE_W + H_GAP); }
   function ny(n) { return 20 + n._depth * (NODE_H + V_GAP); }
 
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const handleWheel = (e) => {
+      e.preventDefault();
+      if (e.ctrlKey || e.metaKey) {
+        const zoomFactor = -e.deltaY * 0.002;
+        setScale(s => Math.min(Math.max(0.1, s + zoomFactor), 3));
+      } else {
+        setPos(p => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
+      }
+    };
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, []);
+
+  function handleMouseDown(e) {
+    if (e.button !== 0) return; 
+    setIsDragging(true);
+    dragStart.current = { x: e.clientX, y: e.clientY, pos: { ...pos } };
+  }
+
+  function handleMouseMove(e) {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
+    setPos({ x: dragStart.current.pos.x + dx, y: dragStart.current.pos.y + dy });
+  }
+
+  function handleMouseUp() { setIsDragging(false); }
+  
+  function resetView() {
+    setScale(1);
+    setPos({ x: 0, y: 0 });
+  }
+
   return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      overflow: 'auto',
-      background: 'var(--panel)',
-      border: '1px solid var(--border)',
-      borderRadius: 6,
-      position: 'relative',
-    }}
-    className="dot-grid"
+    <div 
+      ref={containerRef}
+      style={{
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        background: 'var(--panel)',
+        border: '1px solid var(--border)',
+        borderRadius: 6,
+        position: 'relative',
+        cursor: isDragging ? 'grabbing' : 'grab'
+      }}
+      className="dot-grid"
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
     >
       {}
       <div style={{
-        position: 'sticky',
+        position: 'absolute',
         top: 0,
         left: 0,
         background: 'var(--panel)',
         borderBottom: '1px solid var(--border)',
+        borderRight: '1px solid var(--border)',
+        borderBottomRightRadius: 6,
         padding: '7px 12px',
         display: 'flex',
         gap: 14,
-        zIndex: 1,
+        zIndex: 2,
       }}>
         {[
           { type: 'call',   label: 'call' },
@@ -142,14 +192,30 @@ export default function RecursionTree() {
         })}
       </div>
 
+      {}
+      <div style={{
+        position: 'absolute',
+        bottom: 12,
+        right: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 6,
+        zIndex: 2,
+      }}>
+        <button className="btn-icon" onClick={() => setScale(s => Math.min(3, s + 0.2))} style={{ background: 'var(--panel-2)', border: '1px solid var(--border)' }}>
+          <ZoomIn size={14} />
+        </button>
+        <button className="btn-icon" onClick={resetView} style={{ background: 'var(--panel-2)', border: '1px solid var(--border)' }}>
+          <Maximize size={14} />
+        </button>
+        <button className="btn-icon" onClick={() => setScale(s => Math.max(0.1, s - 0.2))} style={{ background: 'var(--panel-2)', border: '1px solid var(--border)' }}>
+          <ZoomOut size={14} />
+        </button>
+      </div>
+
       {nodes.length === 0 && (
         <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: 200,
-          gap: 8,
+          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
           <span style={{ fontSize: 13, color: 'var(--fg-dim)' }}>
             Run the algorithm — the recursion tree builds as you step.
@@ -157,73 +223,82 @@ export default function RecursionTree() {
         </div>
       )}
 
-      <svg width={svgW} height={svgH} style={{ display: 'block' }}>
-        {}
-        {nodes.map(n => {
-          if (!n.parent || n.parent.id === 'root') return null;
-          const px = nx(n.parent) + NODE_W / 2;
-          const py = ny(n.parent) + NODE_H;
-          const cx = nx(n) + NODE_W / 2;
-          const cy = ny(n);
-          const my = (py + cy) / 2;
-          return (
-            <path
-              key={`e-${n.id}`}
-              d={`M ${px} ${py} C ${px} ${my}, ${cx} ${my}, ${cx} ${cy}`}
-              stroke={n.active ? 'var(--accent)' : 'var(--border)'}
-              strokeWidth={n.active ? 1.5 : 1}
-              fill="none"
-              style={{ transition: 'stroke 0.2s ease' }}
-            />
-          );
-        })}
-
-        {}
-        {nodes.map(n => {
-          const x = nx(n);
-          const y = ny(n);
-          const s = n.active ? NODE_STYLE.active : (NODE_STYLE[n.type] || NODE_STYLE.call);
-          const rx = NODE_W / 2;
-          const ry = NODE_H / 2;
-          return (
-            <g key={n.id}>
-              <ellipse
-                cx={x + rx} cy={y + ry}
-                rx={rx} ry={ry}
-                fill={s.fill}
-                stroke={s.stroke}
+      {}
+      <div style={{
+        transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+        transformOrigin: '0 0',
+        width: svgW,
+        height: svgH,
+      }}>
+        <svg width={svgW} height={svgH} style={{ display: 'block' }}>
+          {}
+          {nodes.map(n => {
+            if (!n.parent || n.parent.id === 'root') return null;
+            const px = nx(n.parent) + NODE_W / 2;
+            const py = ny(n.parent) + NODE_H;
+            const cx = nx(n) + NODE_W / 2;
+            const cy = ny(n);
+            const my = (py + cy) / 2;
+            return (
+              <path
+                key={`e-${n.id}`}
+                d={`M ${px} ${py} C ${px} ${my}, ${cx} ${my}, ${cx} ${cy}`}
+                stroke={n.active ? 'var(--accent)' : 'var(--border)'}
                 strokeWidth={n.active ? 1.5 : 1}
-                style={{ transition: 'fill 0.2s ease, stroke 0.2s ease' }}
+                fill="none"
+                style={{ transition: 'stroke 0.2s ease' }}
               />
-              <text
-                x={x + rx} y={y + ry - (n.value !== null && n.value !== undefined ? 4 : 0)}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill={s.text}
-                fontSize={9}
-                fontFamily="JetBrains Mono, monospace"
-                fontWeight={n.active ? '600' : '400'}
-                style={{ transition: 'fill 0.2s ease' }}
-              >
-                {n.label}
-              </text>
-              {n.value !== null && n.value !== undefined && (
+            );
+          })}
+
+          {}
+          {nodes.map(n => {
+            const x = nx(n);
+            const y = ny(n);
+            const s = n.active ? NODE_STYLE.active : (NODE_STYLE[n.type] || NODE_STYLE.call);
+            const rx = NODE_W / 2;
+            const ry = NODE_H / 2;
+            return (
+              <g key={n.id}>
+                <ellipse
+                  cx={x + rx} cy={y + ry}
+                  rx={rx} ry={ry}
+                  fill={s.fill}
+                  stroke={s.stroke}
+                  strokeWidth={n.active ? 1.5 : 1}
+                  style={{ transition: 'fill 0.2s ease, stroke 0.2s ease' }}
+                />
                 <text
-                  x={x + rx} y={y + ry + 8}
+                  x={x + rx} y={y + ry - (n.value !== null && n.value !== undefined ? 4 : 0)}
                   textAnchor="middle"
                   dominantBaseline="middle"
                   fill={s.text}
-                  fontSize={8.5}
+                  fontSize={9}
                   fontFamily="JetBrains Mono, monospace"
-                  opacity={0.8}
+                  fontWeight={n.active ? '600' : '400'}
+                  style={{ pointerEvents: 'none', transition: 'fill 0.2s ease' }}
                 >
-                  ={n.type === 'cache' ? '↩' : ''}{n.value}
+                  {n.label}
                 </text>
-              )}
-            </g>
-          );
-        })}
-      </svg>
+                {n.value !== null && n.value !== undefined && (
+                  <text
+                    x={x + rx} y={y + ry + 8}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill={s.text}
+                    fontSize={8.5}
+                    fontFamily="JetBrains Mono, monospace"
+                    opacity={0.8}
+                    style={{ pointerEvents: 'none' }}
+                  >
+                    ={n.type === 'cache' ? '↩' : ''}{n.value}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
     </div>
   );
 }

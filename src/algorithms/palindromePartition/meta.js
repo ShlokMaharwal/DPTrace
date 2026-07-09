@@ -3,6 +3,7 @@ export const meta = {
   title: 'Palindrome Partitioning (Min Cuts)',
   description: 'Find the minimum number of cuts to partition a string into substrings that are all palindromes. A classic interval DP problem.',
   category: '1D DP',
+  difficulty: 'Hard',
   tags: ['interval DP', 'palindrome', 'string', '1D'],
 
   inputSchema: [
@@ -18,7 +19,7 @@ export const meta = {
       description: 'Try every possible cut position. For each substring, check if it is a palindrome recursively.',
       time: 'O(2ⁿ)',
       space: 'O(n)',
-      visualizer: 'table1d',
+      visualizer: 'tree',
     },
     memoized: {
       label: 'Memoized',
@@ -26,7 +27,7 @@ export const meta = {
       description: 'Cache results for each starting index to avoid recomputing overlapping subproblems.',
       time: 'O(n²)',
       space: 'O(n²)',
-      visualizer: 'table1d',
+      visualizer: 'tree',
     },
     tabulation: {
       label: 'Tabulation',

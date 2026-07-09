@@ -29,6 +29,11 @@ export default function Sidebar() {
         {problemOrder.map((id, idx) => {
           const { meta } = registry[id];
           const isActive = selected === id;
+          const diffColor = meta.difficulty === 'Easy'
+            ? 'var(--state-base)'
+            : meta.difficulty === 'Hard'
+              ? 'var(--state-return)'
+              : 'var(--state-active)';
 
           return (
             <button
@@ -52,22 +57,34 @@ export default function Sidebar() {
                   color: isActive ? 'var(--fg)' : 'var(--fg-muted)',
                   fontWeight: isActive ? 500 : 400,
                   lineHeight: 1.3,
+                  flex: 1,
                 }}>
                   {}
                   {meta.title.split(' (')[0].split(' /')[0]}
                 </span>
               </div>
-              {}
-              <span style={{
-                fontSize: 10,
-                letterSpacing: '0.10em',
-                textTransform: 'uppercase',
-                color: 'var(--fg-dim)',
-                paddingLeft: 28,
-                fontWeight: 400,
-              }}>
-                {meta.category}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 28, marginTop: 2 }}>
+                <span style={{
+                  fontSize: 9,
+                  letterSpacing: '0.10em',
+                  textTransform: 'uppercase',
+                  color: 'var(--fg-dim)',
+                  fontWeight: 400,
+                }}>
+                  {meta.category}
+                </span>
+                {meta.difficulty && (
+                  <span style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    letterSpacing: '0.05em',
+                    color: diffColor,
+                    textTransform: 'uppercase',
+                  }}>
+                    {meta.difficulty}
+                  </span>
+                )}
+              </div>
             </button>
           );
         })}

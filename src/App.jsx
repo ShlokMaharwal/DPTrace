@@ -12,6 +12,7 @@ import StatsPanel from './components/stats/StatsPanel.jsx';
 import ComparisonMode from './components/features/ComparisonMode.jsx';
 import QuizPage from './components/features/QuizPage.jsx';
 import ToolsPage from './components/features/ToolsPage.jsx';
+import HowItWorksPage from './components/features/HowItWorksPage.jsx';
 
 function App() {
   const { problem, approach, input, setSteps, comparisonMode, comparisonApproach, setComparisonSteps, activeView } = useStore();
@@ -44,8 +45,35 @@ function App() {
 
   
   useEffect(() => {
+    
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get('problem');
+    const a = params.get('approach');
+    const i = params.get('input');
+    
+    if (p && registry[p]) {
+      useStore.setState({ problem: p });
+      if (a && registry[p].meta.approaches[a]) {
+        useStore.setState({ approach: a });
+      }
+      if (i) {
+        try {
+          const parsed = JSON.parse(i);
+          useStore.getState().updateInput(p, parsed);
+        } catch(e) {}
+      }
+      
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    
+    setTimeout(() => runAlgorithm(), 10);
+  }, []); 
+
+  
+  useEffect(() => {
     runAlgorithm();
-  }, [problem, approach]);
+  }, [problem, approach, runAlgorithm]);
 
   const truncated = useStore(s => {
     if (!s.steps || s.steps.length === 0) return false;
@@ -105,6 +133,10 @@ function App() {
 
           {activeView === 'tools' && (
             <ToolsPage />
+          )}
+
+          {activeView === 'how-it-works' && (
+            <HowItWorksPage />
           )}
 
           {}

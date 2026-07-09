@@ -3,6 +3,7 @@ export const meta = {
   title: 'Partition Equal Subset Sum',
   description: 'Can we split an array into two subsets that have the exact same sum? It boils down to finding a subset that equals exactly half the total sum.',
   category: 'Subset DP',
+  difficulty: 'Medium',
   tags: ['subset', 'boolean DP', 'NP-complete variant', 'knapsack variant'],
   inputSchema: [
     { key: 'arr', label: 'Array (comma-separated)', type: 'array', maxLength: 8 },

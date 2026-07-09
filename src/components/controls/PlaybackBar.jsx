@@ -1,4 +1,5 @@
 
+import { useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, ChevronFirst, ChevronLast } from 'lucide-react';
 import useStore from '../../store/useStore.js';
 import { usePlayback } from '../../hooks/usePlayback.js';
@@ -12,6 +13,17 @@ export default function PlaybackBar({ truncated }) {
     togglePlay, stepForward, stepBackward,
     setCurrentStep, setSpeed, stats,
   } = useStore();
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      if (e.code === 'ArrowRight') { e.preventDefault(); stepForward(); }
+      if (e.code === 'ArrowLeft') { e.preventDefault(); stepBackward(); }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [togglePlay, stepForward, stepBackward]);
 
   const total = steps.length;
   const step = total > 0 ? steps[currentStep] : null;

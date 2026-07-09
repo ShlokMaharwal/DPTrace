@@ -3,6 +3,7 @@ export const meta = {
   title: 'Longest Common Subsequence',
   description: 'Find the longest sequence of characters that appears in both strings, in the same order, but not necessarily contiguous.',
   category: '2D DP',
+  difficulty: 'Medium',
   tags: ['string', '2D', 'subsequence', 'sequence alignment'],
   inputSchema: [
     { key: 's1', label: 'String 1', type: 'string', maxLength: 8 },

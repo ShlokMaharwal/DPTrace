@@ -2,7 +2,7 @@
 import useStore from '../../store/useStore.js';
 import { registry } from '../../algorithms/index.js';
 import ThemeToggle from '../ThemeToggle.jsx';
-import { SplitSquareHorizontal, Layout, HelpCircle, Wrench } from 'lucide-react';
+import { SplitSquareHorizontal, Layout, HelpCircle, Wrench, BookOpen } from 'lucide-react';
 
 const APPROACH_ORDER = ['bruteForce', 'memoized', 'tabulation', 'spaceOptimized'];
 
@@ -33,7 +33,6 @@ export default function Header() {
         </span>
       </div>
 
-      {}
       <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0 }} />
 
       {}
@@ -87,10 +86,11 @@ export default function Header() {
       <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0, margin: '0 8px' }} />
 
       {}
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 4, background: 'var(--panel-2)', padding: 4, borderRadius: 6, border: '1px solid var(--border)' }}>
         <NavTab icon={<Layout size={14} />} label="Visualizer" active={activeView === 'visualizer'} onClick={() => setActiveView('visualizer')} />
         <NavTab icon={<HelpCircle size={14} />} label="Quiz" active={activeView === 'quiz'} onClick={() => setActiveView('quiz')} />
         <NavTab icon={<Wrench size={14} />} label="Tools" active={activeView === 'tools'} onClick={() => setActiveView('tools')} />
+        <NavTab icon={<BookOpen size={14} />} label="User Guide" active={activeView === 'how-it-works'} onClick={() => setActiveView('how-it-works')} />
       </div>
 
       {activeView === 'visualizer' && (

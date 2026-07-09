@@ -5,6 +5,7 @@ export const meta = {
   title: 'Fibonacci / Climbing Stairs',
   description: 'The standard warm-up. Each number is the sum of the two before it. It\'s exactly the same logic as the climbing stairs problem, just phrased differently.',
   category: '1D DP',
+  difficulty: 'Easy',
   tags: ['warm-up', '1D', 'overlapping subproblems', 'optimal substructure'],
 
   inputSchema: [

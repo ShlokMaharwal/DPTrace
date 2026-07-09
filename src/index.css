@@ -322,3 +322,24 @@ input[type=range]:disabled { opacity: 0.3; cursor: not-allowed; }
     font-size: 11px !important;
   }
 }
+
+@media (max-width: 800px) {
+  .main-layout { flex-direction: column !important; }
+  aside {
+    width: 100% !important; min-width: 100% !important; height: auto !important;
+    border-right: none !important; border-bottom: 1px solid var(--border);
+  }
+  aside nav {
+    flex-direction: row !important; display: flex !important;
+    overflow-x: auto; padding: 0 16px !important;
+  }
+  .problem-item {
+    min-width: 160px; border-left: none !important; border-bottom: 3px solid transparent; padding: 8px 12px !important;
+  }
+  .problem-item.active {
+    border-bottom-color: var(--accent) !important; background: transparent !important;
+  }
+  .code-stats-row { flex-direction: column !important; }
+  .code-stats-row > div { min-width: 100% !important; flex: 1 1 auto !important; }
+  .main-content { min-width: 100% !important; }
+}
