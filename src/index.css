@@ -323,7 +323,7 @@ input[type=range]:disabled { opacity: 0.3; cursor: not-allowed; }
 @media (max-width: 600px) {
   .header-inner {
     padding: 0 10px !important;
-    gap: 6px !important;
+    gap: 0 !important;
   }
 
   /* On mobile, hide desktop nav tabs and show hamburger */
@@ -331,14 +331,9 @@ input[type=range]:disabled { opacity: 0.3; cursor: not-allowed; }
   .header-compare-desktop { display: none !important; }
   .header-menu-btn { display: flex !important; }
 
-  .approach-tabs {
-    gap: 0 !important;
-  }
-
-  .approach-tab {
-    padding: 6px 6px !important;
-    font-size: 11px !important;
-  }
+  /* Hide problem title + approach tabs — in hamburger menu instead */
+  .header-problem-title { display: none !important; }
+  .header-approach-tabs { display: none !important; }
 
   .playback-controls {
     flex-wrap: wrap !important;
@@ -370,4 +365,12 @@ input[type=range]:disabled { opacity: 0.3; cursor: not-allowed; }
   .header-mobile-menu { display: none !important; }
   .header-nav-desktop { display: flex !important; }
   .header-compare-desktop { display: flex !important; }
+}
+
+/* ──────────────────────────────────────────
+   Tablet (601–900px): hide problem title to save space
+   but keep approach tabs visible (no hamburger at this width)
+────────────────────────────────────────── */
+@media (max-width: 900px) and (min-width: 601px) {
+  .header-problem-title { display: none !important; }
 }

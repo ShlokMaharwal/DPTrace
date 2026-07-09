@@ -18,35 +18,75 @@ export default function Header() {
       borderBottom: '1px solid var(--border)',
       flexShrink: 0,
     }}>
-      {/* ── Row 1: logo | approach tabs | actions ── */}
+      {/* ── Main header row ── */}
       <div className="header-inner" style={{
         height: 48,
         display: 'flex',
         alignItems: 'center',
         padding: '0 16px',
-        gap: 10,
-        overflowX: 'hidden',
+        gap: 0,
+        overflow: 'hidden',
       }}>
 
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 1, flexShrink: 0 }}>
-          <span className="logo" style={{
-            fontSize: 22,
+        <span className="logo" style={{
+          fontSize: 22,
+          color: 'var(--fg)',
+          letterSpacing: '-0.02em',
+          lineHeight: 1,
+          flexShrink: 0,
+          marginRight: 12,
+        }}>
+          DPTrace
+        </span>
+
+        {/* Problem title + category — hidden on tablet/mobile */}
+        <div className="header-problem-title" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 7,
+          flexShrink: 0,
+          marginRight: 4,
+          minWidth: 0,
+          overflow: 'hidden',
+        }}>
+          <div style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0, marginRight: 8 }} />
+          <span style={{
+            fontSize: 13,
+            fontWeight: 500,
             color: 'var(--fg)',
-            letterSpacing: '-0.02em',
-            lineHeight: 1,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}>
-            DPTrace
+            {meta.title}
+          </span>
+          <span style={{
+            fontSize: 10,
+            letterSpacing: '0.10em',
+            textTransform: 'uppercase',
+            color: 'var(--fg-dim)',
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}>
+            {meta.category}
           </span>
         </div>
 
-        {/* Spacer pushes everything to the right */}
+        {/* Flex spacer — pushes right-side items to the right */}
         <div style={{ flex: 1 }} />
 
+        {/* ── RIGHT SIDE ── */}
 
-        {/* Desktop nav pill: approach tabs + view tabs together */}
-        <div className="header-nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 0, background: 'var(--panel-2)', padding: 4, borderRadius: 6, border: '1px solid var(--border)', flexShrink: 0 }}>
-          {/* Approach tabs */}
+        {/* Approach tabs (BF, Memo, Tab, O(1)) — underline style */}
+        <div className="header-approach-tabs approach-tabs" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0,
+          flexShrink: 0,
+          marginRight: 6,
+        }}>
           {APPROACH_ORDER.map(key => {
             const ap = meta.approaches[key];
             if (!ap) return null;
@@ -56,44 +96,57 @@ export default function Header() {
                 className={`approach-tab ${approach === key ? 'active' : ''}`}
                 onClick={() => setApproach(key)}
                 title={ap.description}
-                style={{ padding: '5px 10px', fontSize: 12 }}
               >
                 {ap.shortLabel}
               </button>
             );
           })}
+        </div>
 
-          {/* Thin divider */}
-          <div style={{ width: 1, height: 18, background: 'var(--border)', margin: '0 4px', flexShrink: 0 }} />
+        {/* Thin separator between approach tabs and view nav pill */}
+        <div className="header-approach-tabs" style={{ width: 1, height: 18, background: 'var(--border)', flexShrink: 0, marginRight: 8 }} />
 
-          {/* View tabs */}
+        {/* View nav pill — desktop only */}
+        <div className="header-nav-desktop" style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          background: 'var(--panel-2)',
+          padding: 4,
+          borderRadius: 6,
+          border: '1px solid var(--border)',
+          flexShrink: 0,
+          marginRight: 8,
+        }}>
           <NavTab icon={<Layout size={14} />} label="Visualizer" active={activeView === 'visualizer'} onClick={() => setActiveView('visualizer')} />
           <NavTab icon={<HelpCircle size={14} />} label="Quiz" active={activeView === 'quiz'} onClick={() => setActiveView('quiz')} />
           <NavTab icon={<Wrench size={14} />} label="Tools" active={activeView === 'tools'} onClick={() => setActiveView('tools')} />
-          <NavTab icon={<BookOpen size={14} />} label="Guide" active={activeView === 'how-it-works'} onClick={() => setActiveView('how-it-works')} />
+          <NavTab icon={<BookOpen size={14} />} label="User Guide" active={activeView === 'how-it-works'} onClick={() => setActiveView('how-it-works')} />
         </div>
 
-        {activeView === 'visualizer' && (
-          <>
-            <div className="header-compare-desktop" style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
-              <button
-                className={`btn ${comparisonMode ? 'btn-active' : ''}`}
-                onClick={toggleComparisonMode}
-                title="Compare approaches side-by-side"
-                style={{ padding: '5px 8px', minWidth: 'auto', background: comparisonMode ? 'var(--accent-soft)' : 'transparent', color: comparisonMode ? 'var(--accent)' : 'var(--fg-muted)', border: comparisonMode ? '1px solid var(--accent)' : '1px solid var(--border)' }}
-              >
-                <SplitSquareHorizontal size={14} />
-                <span className="compare-label" style={{ fontSize: 11, marginLeft: 4 }}>Compare</span>
-              </button>
-            </div>
-          </>
-        )}
+        {/* Compare button — desktop only */}
+        <div className="header-compare-desktop" style={{ display: 'flex', alignItems: 'center', marginRight: 8, flexShrink: 0 }}>
+          <button
+            className="btn"
+            onClick={toggleComparisonMode}
+            title="Compare approaches side-by-side"
+            style={{
+              padding: '5px 10px',
+              background: comparisonMode ? 'var(--accent-soft)' : 'transparent',
+              color: comparisonMode ? 'var(--accent)' : 'var(--fg-muted)',
+              border: `1px solid ${comparisonMode ? 'var(--accent)' : 'var(--border)'}`,
+            }}
+          >
+            <SplitSquareHorizontal size={14} />
+            <span style={{ fontSize: 11, marginLeft: 4 }}>Compare</span>
+          </button>
+        </div>
 
         {/* Hamburger — mobile only */}
         <button
           className="btn-icon header-menu-btn"
           onClick={() => setMenuOpen(o => !o)}
-          style={{ flexShrink: 0 }}
+          style={{ flexShrink: 0, marginRight: 8 }}
           aria-label="Menu"
         >
           {menuOpen ? <X size={16} /> : <Menu size={16} />}
@@ -112,7 +165,31 @@ export default function Header() {
           flexDirection: 'column',
           gap: 6,
         }}>
-          {/* Nav views */}
+          {/* Approach tabs */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, paddingBottom: 6, borderBottom: '1px solid var(--border)' }}>
+            {APPROACH_ORDER.map(key => {
+              const ap = meta.approaches[key];
+              if (!ap) return null;
+              return (
+                <button
+                  key={key}
+                  onClick={() => { setApproach(key); setMenuOpen(false); }}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 5,
+                    background: approach === key ? 'var(--accent-soft)' : 'var(--panel-2)',
+                    color: approach === key ? 'var(--accent)' : 'var(--fg-muted)',
+                    border: `1px solid ${approach === key ? 'var(--accent)' : 'var(--border)'}`,
+                    fontSize: 12, fontWeight: 500, cursor: 'pointer',
+                  }}
+                >
+                  {ap.shortLabel}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* View nav buttons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {[
               { icon: <Layout size={14} />, label: 'Visualizer', view: 'visualizer' },
@@ -140,25 +217,23 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Compare toggle in mobile menu */}
-          {activeView === 'visualizer' && (
-            <button
-              onClick={() => { toggleComparisonMode(); setMenuOpen(false); }}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '7px 12px',
-                borderRadius: 6,
-                background: comparisonMode ? 'var(--accent-soft)' : 'var(--panel-2)',
-                color: comparisonMode ? 'var(--accent)' : 'var(--fg-muted)',
-                border: `1px solid ${comparisonMode ? 'var(--accent)' : 'var(--border)'}`,
-                fontSize: 13, fontWeight: 500, cursor: 'pointer',
-                width: '100%',
-                justifyContent: 'center',
-              }}
-            >
-              <SplitSquareHorizontal size={14} /> Compare approaches
-            </button>
-          )}
+          {/* Compare toggle */}
+          <button
+            onClick={() => { toggleComparisonMode(); setMenuOpen(false); }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '7px 12px',
+              borderRadius: 6,
+              background: comparisonMode ? 'var(--accent-soft)' : 'var(--panel-2)',
+              color: comparisonMode ? 'var(--accent)' : 'var(--fg-muted)',
+              border: `1px solid ${comparisonMode ? 'var(--accent)' : 'var(--border)'}`,
+              fontSize: 13, fontWeight: 500, cursor: 'pointer',
+              width: '100%',
+              justifyContent: 'center',
+            }}
+          >
+            <SplitSquareHorizontal size={14} /> Compare approaches
+          </button>
         </div>
       )}
     </header>
